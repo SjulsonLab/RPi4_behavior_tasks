@@ -1,0 +1,33 @@
+{
+  "case": "noop_seeded_small",
+  "parameters": {
+    "seed": 11,
+    "trial_count": 6
+  },
+  "protocol": "noop",
+  "schema_version": 1,
+  "snapshot": {
+    "event_type_counts": {
+      "session_complete": 1,
+      "session_start": 1,
+      "trial": 6
+    },
+    "first_event_type": "session_start",
+    "last_event_type": "session_complete",
+    "outcome_counts": {
+      "noop_idle": 3,
+      "noop_ok": 1,
+      "noop_retry": 2
+    },
+    "outcomes": [
+      "noop_retry",
+      "noop_idle",
+      "noop_retry",
+      "noop_idle",
+      "noop_idle",
+      "noop_ok"
+    ],
+    "protocol": "noop",
+    "total_trials": 6
+  }
+}

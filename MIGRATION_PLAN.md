@@ -12,6 +12,7 @@ This plan migrates behavioral task code out of the original monorepo into `RPi4_
 6. Phase 5: completed (optional tag-strict production lock and CI automation).
 7. Phase 6: completed (artifact integrity validation and verifier CLI).
 8. Phase 7: completed (semantic run-quality checks and quality reports).
+9. Phase 8: completed (deterministic seeded baseline regression harness).
 
 Inputs agreed during planning:
 - Priority: architectural cleanup over direct code copy.
@@ -196,6 +197,11 @@ Validation:
 1. Add protocol-aware semantic quality checks across events and results.
 2. Write a `quality_report.json` artifact per run.
 3. Enforce quality failures as run failures unless explicitly disabled in debug mode.
+
+### Phase 8: Seeded Baseline Regression
+1. Define deterministic baseline cases across maintained and staged protocols.
+2. Add snapshot generation tooling for intentional baseline refreshes.
+3. Add regression tests that require exact snapshot matches.
 
 ## Parity and Test Strategy
 ### Deterministic parity

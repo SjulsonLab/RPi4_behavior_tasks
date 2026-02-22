@@ -1,0 +1,55 @@
+{
+  "case": "ivsa_seeded_small",
+  "parameters": {
+    "active_lever_probability": 0.5,
+    "enforce_timing": false,
+    "infusion_probability_given_active_press": 0.9,
+    "press_probability_active": 0.6,
+    "press_probability_inactive": 0.1,
+    "seed": 53,
+    "timeout_s": 0.0,
+    "trial_count": 18
+  },
+  "protocol": "ivsa",
+  "schema_version": 1,
+  "snapshot": {
+    "event_type_counts": {
+      "ivsa_trial_end": 18,
+      "ivsa_trial_start": 18,
+      "session_complete": 1,
+      "session_start": 1,
+      "session_summary": 1
+    },
+    "first_event_type": "session_start",
+    "last_event_type": "session_summary",
+    "outcome_counts": {
+      "active_no_press": 4,
+      "active_press_infused": 5,
+      "active_press_no_infusion": 1,
+      "inactive_no_press": 6,
+      "inactive_press": 2
+    },
+    "outcomes": [
+      "inactive_no_press",
+      "active_no_press",
+      "inactive_no_press",
+      "inactive_no_press",
+      "inactive_press",
+      "active_no_press",
+      "inactive_no_press",
+      "inactive_no_press",
+      "active_press_infused",
+      "active_press_infused",
+      "active_no_press",
+      "inactive_press",
+      "active_press_infused",
+      "active_press_infused",
+      "inactive_no_press",
+      "active_no_press",
+      "active_press_no_infusion",
+      "active_press_infused"
+    ],
+    "protocol": "ivsa",
+    "total_trials": 18
+  }
+}

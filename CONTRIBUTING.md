@@ -47,4 +47,8 @@ python -m unittest discover -s tests -p 'test_*.py'
 python tools/verify_run_artifacts.py .task_runs/<run_id>
 ```
 6. Confirm `quality_report.json` is present and status is not `FAIL`.
-7. Update docs/runbook when workflow or guardrails change.
+7. If behavior intentionally changes, regenerate seeded baselines:
+```bash
+python tools/generate_seeded_baselines.py --output-dir tests/baselines
+```
+8. Update docs/runbook when workflow or guardrails change.

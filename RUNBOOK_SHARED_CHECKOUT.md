@@ -61,6 +61,13 @@ python tools/verify_run_artifacts.py .task_runs/<run_id>
 Note: production mode does not allow disabling artifact validation.
 Note: production mode does not allow disabling semantic run-quality validation.
 
+## Behavior drift checks
+Seeded baseline snapshots are tested in CI for regression detection. If a behavior
+change is intentional, regenerate and commit baseline files:
+```bash
+python tools/generate_seeded_baselines.py --output-dir tests/baselines
+```
+
 ## Release cadence recommendation
 1. Validate on a staging Pi in debug mode.
 2. Tag the tested commit (`vX.Y.Z`).

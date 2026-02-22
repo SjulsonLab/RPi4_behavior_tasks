@@ -1,0 +1,54 @@
+{
+  "case": "soyoun_treadmill_seeded_small",
+  "parameters": {
+    "enforce_timing": false,
+    "intertrial_interval_s": 0.0,
+    "lick_probability_neutral_zone": 0.2,
+    "lick_probability_reward_zone": 0.8,
+    "reward_zone_probability": 0.4,
+    "seed": 31,
+    "speed_mean_cm_s": 15.0,
+    "speed_std_cm_s": 2.0,
+    "trial_count": 16,
+    "trial_duration_s": 1.5
+  },
+  "protocol": "soyoun_treadmill",
+  "schema_version": 1,
+  "snapshot": {
+    "event_type_counts": {
+      "session_complete": 1,
+      "session_start": 1,
+      "session_summary": 1,
+      "treadmill_trial_end": 16,
+      "treadmill_trial_start": 16
+    },
+    "first_event_type": "session_start",
+    "last_event_type": "session_summary",
+    "outcome_counts": {
+      "neutral_lick": 2,
+      "neutral_pass": 5,
+      "reward_hit": 8,
+      "reward_miss": 1
+    },
+    "outcomes": [
+      "reward_hit",
+      "reward_hit",
+      "reward_hit",
+      "neutral_lick",
+      "neutral_pass",
+      "reward_hit",
+      "neutral_pass",
+      "reward_miss",
+      "reward_hit",
+      "neutral_pass",
+      "reward_hit",
+      "reward_hit",
+      "neutral_pass",
+      "neutral_lick",
+      "neutral_pass",
+      "reward_hit"
+    ],
+    "protocol": "soyoun_treadmill",
+    "total_trials": 16
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "case": "context_seeded_small",
+  "parameters": {
+    "correct_reward_probability": 0.9,
+    "enforce_timing": false,
+    "incorrect_reward_probability": 0.0,
+    "intertrial_interval_s": 0.0,
+    "max_correct_trials_in_patch": 10,
+    "patch_choice_accuracy": 0.75,
+    "response_probability": 0.95,
+    "seed": 17,
+    "start_patch": "right",
+    "switch_probability": 0.2,
+    "trial_count": 24
+  },
+  "protocol": "context",
+  "schema_version": 1,
+  "snapshot": {
+    "event_type_counts": {
+      "context_complete": 1,
+      "context_start": 1,
+      "context_trial": 24,
+      "session_start": 1,
+      "session_summary": 1
+    },
+    "first_event_type": "session_start",
+    "last_event_type": "session_summary",
+    "outcome_counts": {
+      "correct_rewarded": 10,
+      "correct_unrewarded": 2,
+      "incorrect_unrewarded": 11,
+      "omission": 1
+    },
+    "outcomes": [
+      "incorrect_unrewarded",
+      "incorrect_unrewarded",
+      "correct_rewarded",
+      "correct_rewarded",
+      "incorrect_unrewarded",
+      "omission",
+      "incorrect_unrewarded",
+      "correct_rewarded",
+      "correct_rewarded",
+      "correct_unrewarded",
+      "incorrect_unrewarded",
+      "incorrect_unrewarded",
+      "correct_rewarded",
+      "incorrect_unrewarded",
+      "incorrect_unrewarded",
+      "incorrect_unrewarded",
+      "correct_rewarded",
+      "correct_rewarded",
+      "incorrect_unrewarded",
+      "incorrect_unrewarded",
+      "correct_rewarded",
+      "correct_rewarded",
+      "correct_unrewarded",
+      "correct_rewarded"
+    ],
+    "protocol": "context",
+    "total_trials": 24
+  }
+}

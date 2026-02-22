@@ -1,0 +1,58 @@
+{
+  "case": "gonogo_seeded_small",
+  "parameters": {
+    "enforce_timing": false,
+    "go_probability": 0.5,
+    "iti_max_s": 4.0,
+    "iti_min_s": 2.0,
+    "lockout_length_s": 1.5,
+    "response_prob_go": 0.8,
+    "response_prob_nogo": 0.2,
+    "response_window_s": 1.5,
+    "seed": 7,
+    "trial_count": 20
+  },
+  "protocol": "gonogo",
+  "schema_version": 1,
+  "snapshot": {
+    "event_type_counts": {
+      "session_complete": 1,
+      "session_start": 1,
+      "session_summary": 1,
+      "trial_end": 20,
+      "trial_start": 20
+    },
+    "first_event_type": "session_start",
+    "last_event_type": "session_summary",
+    "outcome_counts": {
+      "cr": 10,
+      "fa": 2,
+      "hit": 6,
+      "miss": 2
+    },
+    "outcomes": [
+      "hit",
+      "cr",
+      "fa",
+      "hit",
+      "hit",
+      "miss",
+      "cr",
+      "hit",
+      "cr",
+      "fa",
+      "cr",
+      "cr",
+      "cr",
+      "cr",
+      "cr",
+      "hit",
+      "hit",
+      "cr",
+      "cr",
+      "miss"
+    ],
+    "protocol": "gonogo",
+    "total_trials": 20
+  }
+}

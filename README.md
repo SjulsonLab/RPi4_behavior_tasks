@@ -4,7 +4,7 @@ Behavioral task protocols for RPi4 behavior boxes, separated from hardware suppo
 
 ## Current status
 Phase 0 scaffolding plus Phase 1/2 baselines are in place, and Phase 3
-experimental staging is now wired. Phase 4/5/6/7 release controls are now available:
+experimental staging is now wired. Phase 4/5/6/7/8 release controls are now available:
 - Shared protocol contract and runtime modules.
 - Preflight branch/commit checks.
 - User/project namespace under `users/`.
@@ -22,6 +22,7 @@ experimental staging is now wired. Phase 4/5/6/7 release controls are now availa
 - CI workflow runs smoke/parity tests on push and pull requests.
 - Automatic run-artifact structural validation after each task run.
 - Automatic semantic run-quality checks after each task run.
+- Deterministic seeded baseline regression snapshots for drift detection.
 - Debug-only escape hatches:
   - `--no-validate-artifacts`
   - `--no-validate-quality`
@@ -93,6 +94,12 @@ Run tests:
 
 ```bash
 python -m unittest discover -s tests -p 'test_*.py'
+```
+
+Regenerate deterministic seeded baselines (intentional updates only):
+
+```bash
+python tools/generate_seeded_baselines.py --output-dir tests/baselines
 ```
 
 Validate an existing run directory:
