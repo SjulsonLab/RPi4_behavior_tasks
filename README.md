@@ -2,6 +2,9 @@
 
 Behavioral task protocols for RPi4 behavior boxes, separated from hardware support code.
 
+User testing handoff:
+- See `INSTRUCTIONS.md` for the recommended per-user testing workflow and examples.
+
 ## Current status
 Phase 0 scaffolding plus Phase 1/2 baselines are in place, and Phase 3
 experimental staging is now wired. Phase 4/5/6/7/8 release controls are now available:
@@ -34,6 +37,7 @@ experimental staging is now wired. Phase 4/5/6/7/8 release controls are now avai
 - `tests/`: smoke/parity scaffolding.
 - `RUNBOOK_SHARED_CHECKOUT.md`: operator playbook for one-checkout-per-Pi operation.
 - `CONTRIBUTING.md`: ownership boundaries and merge policy.
+- `INSTRUCTIONS.md`: user-facing instructions for testing tasks on this framework.
 
 ## Quickstart
 Run the no-op scaffold task:
