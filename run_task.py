@@ -13,19 +13,25 @@ from runtime.logging_schema import (
     write_run_metadata,
 )
 from runtime.preflight import run_preflight
-from runtime.runner import run_protocol
+from runtime.runner import SUPPORTED_PROTOCOLS, run_protocol
 from runtime.session_config import build_session_config, load_mouse_info, load_session_template
 
 
 DEFAULT_TEMPLATE_BY_PROTOCOL = {
     "noop": Path("users/shared/session_templates/noop_default.json"),
+    "gonogo": Path("users/shared/session_templates/gonogo_default.json"),
+    "go_nogo": Path("users/shared/session_templates/gonogo_default.json"),
 }
 DEFAULT_MOUSE_INFO = Path("users/shared/mouse_info/demo_mouse.json")
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run a behavioral task protocol.")
-    parser.add_argument("--protocol", default="noop", help="Protocol name (default: noop).")
+    parser.add_argument(
+        "--protocol",
+        default=None,
+        help=f"Protocol name. Supported: {', '.join(SUPPORTED_PROTOCOLS)}. If omitted, use template protocol.",
+    )
     parser.add_argument("--template", type=Path, help="Path to session template JSON file.")
     parser.add_argument("--mouse-info", type=Path, help="Path to mouse info JSON file.")
     parser.add_argument("--output-dir", type=Path, default=Path(".task_runs"), help="Output root directory.")
@@ -41,12 +47,13 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def resolve_template_path(repo_root: Path, protocol: str, template_arg: Path | None) -> Path:
+def resolve_template_path(repo_root: Path, protocol: str | None, template_arg: Path | None) -> Path:
     if template_arg is not None:
         return (repo_root / template_arg).resolve() if not template_arg.is_absolute() else template_arg
-    if protocol not in DEFAULT_TEMPLATE_BY_PROTOCOL:
-        raise ValueError(f"No default template is configured for protocol '{protocol}'.")
-    return (repo_root / DEFAULT_TEMPLATE_BY_PROTOCOL[protocol]).resolve()
+    selected_protocol = protocol if protocol else "noop"
+    if selected_protocol not in DEFAULT_TEMPLATE_BY_PROTOCOL:
+        raise ValueError(f"No default template is configured for protocol '{selected_protocol}'.")
+    return (repo_root / DEFAULT_TEMPLATE_BY_PROTOCOL[selected_protocol]).resolve()
 
 
 def resolve_mouse_info_path(repo_root: Path, mouse_info_arg: Path | None) -> Path:
@@ -66,7 +73,7 @@ def main() -> int:
     mouse_info = load_mouse_info(mouse_info_path)
 
     # Allow CLI protocol override while reusing a template as a parameter source.
-    protocol_name = args.protocol or template.protocol
+    protocol_name = args.protocol if args.protocol else template.protocol
     cli_overrides = parse_cli_overrides(args.set)
     parameters = resolve_runtime_parameters(
         template=template,

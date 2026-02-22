@@ -3,11 +3,13 @@
 Behavioral task protocols for RPi4 behavior boxes, separated from hardware support code.
 
 ## Current status
-Phase 0 migration scaffolding is in place:
+Phase 0 scaffolding plus Phase 1 go/no-go baseline are in place:
 - Shared protocol contract and runtime modules.
 - Preflight branch/commit checks.
 - User/project namespace under `users/`.
 - A runnable no-op protocol for smoke testing.
+- Consolidated `gonogo` protocol with seeded parity/distribution tests.
+- Julia/Duy go-no-go templates and wrapper entrypoint under `users/julia_duy/`.
 
 ## Layout
 - `protocols/`: maintained shared protocol implementations.
@@ -22,8 +24,20 @@ Run the no-op scaffold task:
 python run_task.py --protocol noop --yes --output-dir .task_runs
 ```
 
+Run consolidated go/no-go with shared defaults:
+
+```bash
+python run_task.py --protocol gonogo --yes --output-dir .task_runs
+```
+
+Run Julia/Duy go-no-go wrapper:
+
+```bash
+python users/julia_duy/wrappers/run_gonogo_julia_duy.py --yes --output-dir .task_runs
+```
+
 Run tests:
 
 ```bash
-python -m unittest discover -s tests
+python -m unittest discover -s tests -p 'test_*.py'
 ```

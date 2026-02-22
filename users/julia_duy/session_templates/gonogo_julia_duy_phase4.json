@@ -1,0 +1,22 @@
+{
+  "protocol": "gonogo",
+  "preset": "julia_duy_phase4",
+  "max_minutes": 120,
+  "required_parameters": [],
+  "parameters": {
+    "trial_count": 120,
+    "go_probability": 0.5,
+    "response_prob_go": 0.85,
+    "response_prob_nogo": 0.2,
+    "lockout_length_s": 1.5,
+    "response_window_s": 1.5,
+    "iti_min_s": 2.5,
+    "iti_max_s": 4.5,
+    "reward_size_ul": 5.0,
+    "air_puff_s": 0.15,
+    "seed": 314159,
+    "enforce_timing": false,
+    "variant": "julia_duy_phase4",
+    "response_port": "left"
+  }
+}

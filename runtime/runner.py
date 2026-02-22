@@ -5,6 +5,9 @@ from typing import Callable
 from runtime.session_config import SessionConfig
 
 
+SUPPORTED_PROTOCOLS = ("noop", "gonogo", "go_nogo")
+
+
 
 def run_protocol(
     session: SessionConfig,
@@ -15,7 +18,12 @@ def run_protocol(
 
         return run_noop(session=session, emit_event=emit_event)
 
+    if session.protocol in {"gonogo", "go_nogo"}:
+        from protocols.gonogo.runner import run_gonogo
+
+        return run_gonogo(session=session, emit_event=emit_event)
+
     raise ValueError(
         f"Unsupported protocol '{session.protocol}'. "
-        "Only 'noop' is implemented in Phase 0 scaffolding."
+        f"Supported protocols: {', '.join(SUPPORTED_PROTOCOLS)}."
     )

@@ -42,6 +42,47 @@ class RunnerSmokeTest(unittest.TestCase):
         self.assertTrue(events)
         self.assertEqual(events[0][0], "session_start")
 
+    def test_gonogo_runner_executes(self) -> None:
+        template = SessionTemplate(
+            protocol="gonogo",
+            preset="smoke_gonogo",
+            max_minutes=1,
+            required_parameters=[],
+            parameters={},
+        )
+        mouse = MouseInfo(mouse_id="SMOKE_GONOGO_001", project="smoke_tests")
+        session = build_session_config(
+            template=template,
+            mouse_info=mouse,
+            resolved_parameters={
+                "trial_count": 10,
+                "seed": 7,
+                "go_probability": 0.5,
+                "response_prob_go": 0.8,
+                "response_prob_nogo": 0.2,
+                "lockout_length_s": 1.5,
+                "response_window_s": 1.5,
+                "iti_min_s": 2.0,
+                "iti_max_s": 4.0,
+                "enforce_timing": False,
+            },
+            source_template="inline",
+        )
+
+        events: list[tuple[str, dict[str, object]]] = []
+
+        def emit_event(event_type: str, payload: dict[str, object]) -> None:
+            events.append((event_type, payload))
+
+        result = run_protocol(session=session, emit_event=emit_event)
+
+        self.assertEqual(result["protocol"], "gonogo")
+        self.assertEqual(result["total_trials"], 10)
+        self.assertEqual(sum(result["outcome_counts"].values()), 10)
+        self.assertIn("summary", result)
+        self.assertTrue(events)
+        self.assertEqual(events[0][0], "session_start")
+
 
 if __name__ == "__main__":
     unittest.main()
