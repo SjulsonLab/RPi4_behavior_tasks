@@ -1,0 +1,17 @@
+{
+  "name": "context_default",
+  "description": "Simulation-first baseline for consolidated context protocol.",
+  "parameters": {
+    "trial_count": 180,
+    "start_patch": "random",
+    "response_probability": 0.95,
+    "patch_choice_accuracy": 0.75,
+    "correct_reward_probability": 0.9,
+    "incorrect_reward_probability": 0.0,
+    "switch_probability": 0.2,
+    "max_correct_trials_in_patch": 10,
+    "intertrial_interval_s": 2.0,
+    "seed": 123,
+    "enforce_timing": false
+  }
+}

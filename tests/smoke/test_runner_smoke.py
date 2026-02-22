@@ -83,6 +83,48 @@ class RunnerSmokeTest(unittest.TestCase):
         self.assertTrue(events)
         self.assertEqual(events[0][0], "session_start")
 
+    def test_context_runner_executes(self) -> None:
+        template = SessionTemplate(
+            protocol="context",
+            preset="smoke_context",
+            max_minutes=1,
+            required_parameters=[],
+            parameters={},
+        )
+        mouse = MouseInfo(mouse_id="SMOKE_CONTEXT_001", project="smoke_tests")
+        session = build_session_config(
+            template=template,
+            mouse_info=mouse,
+            resolved_parameters={
+                "trial_count": 12,
+                "start_patch": "right",
+                "response_probability": 0.95,
+                "patch_choice_accuracy": 0.75,
+                "correct_reward_probability": 0.9,
+                "incorrect_reward_probability": 0.0,
+                "switch_probability": 0.2,
+                "max_correct_trials_in_patch": 10,
+                "intertrial_interval_s": 0.0,
+                "seed": 17,
+                "enforce_timing": False,
+            },
+            source_template="inline",
+        )
+
+        events: list[tuple[str, dict[str, object]]] = []
+
+        def emit_event(event_type: str, payload: dict[str, object]) -> None:
+            events.append((event_type, payload))
+
+        result = run_protocol(session=session, emit_event=emit_event)
+
+        self.assertEqual(result["protocol"], "context")
+        self.assertEqual(result["total_trials"], 12)
+        self.assertEqual(sum(result["outcome_counts"].values()), 12)
+        self.assertIn("summary", result)
+        self.assertTrue(events)
+        self.assertEqual(events[0][0], "session_start")
+
 
 if __name__ == "__main__":
     unittest.main()

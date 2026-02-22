@@ -1,0 +1,8 @@
+{
+  "mouse_id": "MATT_CONTEXT_DEMO",
+  "project": "matt_context",
+  "species": "mouse",
+  "sex": "unknown",
+  "genotype": "unknown",
+  "notes": "Demo mouse metadata for Matt context migration tests."
+}

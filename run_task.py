@@ -21,6 +21,8 @@ DEFAULT_TEMPLATE_BY_PROTOCOL = {
     "noop": Path("users/shared/session_templates/noop_default.json"),
     "gonogo": Path("users/shared/session_templates/gonogo_default.json"),
     "go_nogo": Path("users/shared/session_templates/gonogo_default.json"),
+    "context": Path("users/shared/session_templates/context_default.json"),
+    "matt_context": Path("users/shared/session_templates/context_default.json"),
 }
 DEFAULT_MOUSE_INFO = Path("users/shared/mouse_info/demo_mouse.json")
 

@@ -1,0 +1,20 @@
+{
+  "protocol": "context",
+  "preset": "matt_context_default",
+  "max_minutes": 180,
+  "required_parameters": [],
+  "parameters": {
+    "trial_count": 220,
+    "start_patch": "random",
+    "response_probability": 0.95,
+    "patch_choice_accuracy": 0.78,
+    "correct_reward_probability": 0.9,
+    "incorrect_reward_probability": 0.05,
+    "switch_probability": 0.2,
+    "max_correct_trials_in_patch": 10,
+    "intertrial_interval_s": 2.0,
+    "seed": 271828,
+    "enforce_timing": false,
+    "variant": "matt_context_default"
+  }
+}

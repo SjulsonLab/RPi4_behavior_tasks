@@ -3,13 +3,15 @@
 Behavioral task protocols for RPi4 behavior boxes, separated from hardware support code.
 
 ## Current status
-Phase 0 scaffolding plus Phase 1 go/no-go baseline are in place:
+Phase 0 scaffolding plus Phase 1/2 baselines are in place:
 - Shared protocol contract and runtime modules.
 - Preflight branch/commit checks.
 - User/project namespace under `users/`.
 - A runnable no-op protocol for smoke testing.
 - Consolidated `gonogo` protocol with seeded parity/distribution tests.
 - Julia/Duy go-no-go templates and wrapper entrypoint under `users/julia_duy/`.
+- Consolidated `context` protocol with seeded parity/distribution tests.
+- Matt context templates and wrapper entrypoint under `users/matt_context/`.
 
 ## Layout
 - `protocols/`: maintained shared protocol implementations.
@@ -34,6 +36,18 @@ Run Julia/Duy go-no-go wrapper:
 
 ```bash
 python users/julia_duy/wrappers/run_gonogo_julia_duy.py --yes --output-dir .task_runs
+```
+
+Run consolidated context with shared defaults:
+
+```bash
+python run_task.py --protocol context --yes --output-dir .task_runs
+```
+
+Run Matt context wrapper:
+
+```bash
+python users/matt_context/wrappers/run_context_matt.py --yes --output-dir .task_runs
 ```
 
 Run tests:
