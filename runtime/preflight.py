@@ -85,7 +85,17 @@ def validate_shared_checkout_guardrails(
     if policy.require_clean_tree_in_production and git_state.dirty:
         violations.append("Working tree is dirty. Production runs require a clean checkout.")
 
-    if not (_is_release_branch(git_state.branch, policy) or _is_release_tag(git_state.exact_tag, policy)):
+    is_release_branch = _is_release_branch(git_state.branch, policy)
+    is_release_tag = _is_release_tag(git_state.exact_tag, policy)
+
+    if policy.require_release_tag_in_production and not is_release_tag:
+        tag_prefixes = ", ".join(policy.allowed_release_tag_prefixes)
+        violations.append(
+            "Release tag is required for production runs but HEAD does not have an allowed tag. "
+            f"Allowed tag prefixes: [{tag_prefixes}]."
+        )
+
+    if not (is_release_branch or is_release_tag):
         branch_list = ", ".join(policy.allowed_release_branches)
         prefix_list = ", ".join(policy.allowed_release_branch_prefixes)
         tag_prefixes = ", ".join(policy.allowed_release_tag_prefixes)

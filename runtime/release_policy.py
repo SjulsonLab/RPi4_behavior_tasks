@@ -9,6 +9,7 @@ class ReleasePolicy:
     allowed_release_branch_prefixes: tuple[str, ...] = ("release/",)
     allowed_release_tag_prefixes: tuple[str, ...] = ("v", "release-")
     require_clean_tree_in_production: bool = True
+    require_release_tag_in_production: bool = False
 
 
 DEFAULT_RELEASE_POLICY = ReleasePolicy()

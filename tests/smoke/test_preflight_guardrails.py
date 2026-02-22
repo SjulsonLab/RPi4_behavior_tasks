@@ -69,6 +69,28 @@ class PreflightGuardrailTest(unittest.TestCase):
         violations = validate_shared_checkout_guardrails(git_state=git_state, policy=policy)
         self.assertEqual(violations, [])
 
+    def test_require_release_tag_blocks_untagged_head(self) -> None:
+        policy = ReleasePolicy(require_release_tag_in_production=True)
+        git_state = GitState(
+            branch="main",
+            commit="deadbeef",
+            dirty=False,
+            exact_tag=None,
+        )
+        violations = validate_shared_checkout_guardrails(git_state=git_state, policy=policy)
+        self.assertTrue(any("release tag is required" in issue.lower() for issue in violations))
+
+    def test_require_release_tag_accepts_tagged_head(self) -> None:
+        policy = ReleasePolicy(require_release_tag_in_production=True)
+        git_state = GitState(
+            branch="HEAD",
+            commit="deadbeef",
+            dirty=False,
+            exact_tag="v2.0.1",
+        )
+        violations = validate_shared_checkout_guardrails(git_state=git_state, policy=policy)
+        self.assertEqual(violations, [])
+
 
 if __name__ == "__main__":
     unittest.main()

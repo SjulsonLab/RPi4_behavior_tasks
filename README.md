@@ -4,7 +4,7 @@ Behavioral task protocols for RPi4 behavior boxes, separated from hardware suppo
 
 ## Current status
 Phase 0 scaffolding plus Phase 1/2 baselines are in place, and Phase 3
-experimental staging is now wired. Phase 4 release controls are now available:
+experimental staging is now wired. Phase 4/5 release controls are now available:
 - Shared protocol contract and runtime modules.
 - Preflight branch/commit checks.
 - User/project namespace under `users/`.
@@ -16,8 +16,10 @@ experimental staging is now wired. Phase 4 release controls are now available:
 - Experimental Soyoun treadmill and IVSA protocol staging paths.
 - Explicit `--allow-experimental` guard for experimental protocol execution.
 - Production guardrails with `--run-mode production`.
+- Optional strict production lock with `--require-release-tag`.
 - Run metadata now records branch, tag, commit, dirty state, and run mode.
 - Shared-checkout operator runbook and contributor ownership guidance.
+- CI workflow runs smoke/parity tests on push and pull requests.
 
 ## Layout
 - `protocols/`: maintained shared protocol implementations.
@@ -44,6 +46,12 @@ Run consolidated go/no-go in production mode (guardrails on):
 
 ```bash
 python run_task.py --protocol gonogo --run-mode production --output-dir .task_runs
+```
+
+Run production with strict tag lock (recommended for shared Pis):
+
+```bash
+python run_task.py --protocol gonogo --run-mode production --require-release-tag --output-dir .task_runs
 ```
 
 Run Julia/Duy go-no-go wrapper:

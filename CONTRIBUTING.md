@@ -37,6 +37,9 @@ Do not version in Git:
 ```bash
 python -m unittest discover -s tests -p 'test_*.py'
 ```
-2. For production-impacting changes, run one manual task in
+2. Ensure CI is green for the branch/PR.
+3. For production-impacting changes, run one manual task in
 `--run-mode production` and verify preflight/metadata fields.
-3. Update docs/runbook when workflow or guardrails change.
+4. For shared-checkout policy changes, run one manual task with
+`--run-mode production --require-release-tag` when feasible.
+5. Update docs/runbook when workflow or guardrails change.

@@ -13,6 +13,7 @@ operators. The controls below are required to keep this mode sane.
 3. Production sessions must be on an allowed release ref:
 `main`, `release`, `release/*`, or tags starting with `v` or `release-`.
 4. Every run records branch/tag/commit/dirty state in `run_metadata.json`.
+5. Recommended: enforce tag lock with `--require-release-tag`.
 
 ## Daily workflow
 1. Fetch updates and tags:
@@ -31,6 +32,11 @@ git status --short
 4. Run the task in production mode:
 ```bash
 python run_task.py --protocol gonogo --run-mode production --output-dir .task_runs
+```
+
+5. For stricter safety on shared Pis, require release tags:
+```bash
+python run_task.py --protocol gonogo --run-mode production --require-release-tag --output-dir .task_runs
 ```
 
 ## Debug window workflow

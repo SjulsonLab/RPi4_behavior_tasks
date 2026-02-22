@@ -9,6 +9,7 @@ This plan migrates behavioral task code out of the original monorepo into `RPi4_
 3. Phase 2: completed.
 4. Phase 3: completed (experimental staging with opt-in execution).
 5. Phase 4: completed (production guardrails, runbook, and contributor boundaries).
+6. Phase 5: completed (optional tag-strict production lock and CI automation).
 
 Inputs agreed during planning:
 - Priority: architectural cleanup over direct code copy.
@@ -178,6 +179,11 @@ Validation:
 2. Add pre-run guardrails for shared-checkout mode.
 3. Add operator runbook for branch hygiene on shared Pis.
 4. Add contributor guidance for `users/` ownership boundaries.
+
+### Phase 5: Operational Safety and CI
+1. Add optional strict release-tag guardrail for production runs.
+2. Add CI automation for smoke/parity test coverage.
+3. Document stricter shared-Pi production commands.
 
 ## Parity and Test Strategy
 ### Deterministic parity

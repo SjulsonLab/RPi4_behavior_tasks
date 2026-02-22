@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import replace
 from pathlib import Path
 
 from runtime.compatibility_layer import parse_cli_overrides, resolve_runtime_parameters
@@ -13,6 +14,7 @@ from runtime.logging_schema import (
     write_run_metadata,
 )
 from runtime.preflight import run_preflight
+from runtime.release_policy import DEFAULT_RELEASE_POLICY, ReleasePolicy
 from runtime.runner import EXPERIMENTAL_PROTOCOLS, SUPPORTED_PROTOCOLS, run_protocol
 from runtime.session_config import build_session_config, load_mouse_info, load_session_template
 
@@ -72,6 +74,14 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Allow running experimental protocols.",
     )
+    parser.add_argument(
+        "--require-release-tag",
+        action="store_true",
+        help=(
+            "Production mode only: require HEAD to have an allowed release tag prefix "
+            "(recommended on shared Pis)."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -96,6 +106,12 @@ def validate_protocol_access(protocol: str, allow_experimental: bool) -> None:
             f"Protocol '{protocol}' is experimental and excluded by default. "
             "Re-run with --allow-experimental to continue."
         )
+
+
+def resolve_release_policy(require_release_tag: bool) -> ReleasePolicy:
+    if not require_release_tag:
+        return DEFAULT_RELEASE_POLICY
+    return replace(DEFAULT_RELEASE_POLICY, require_release_tag_in_production=True)
 
 
 def main() -> int:
@@ -128,6 +144,7 @@ def main() -> int:
     )
 
     require_confirmation = True if args.run_mode == "production" else (not args.yes)
+    release_policy = resolve_release_policy(require_release_tag=args.require_release_tag)
 
     git_state = run_preflight(
         repo_root=repo_root,
@@ -136,6 +153,7 @@ def main() -> int:
         mouse_id=session.mouse_info.mouse_id,
         require_confirmation=require_confirmation,
         run_mode=args.run_mode,
+        release_policy=release_policy,
     )
 
     run_paths = create_run_paths(output_root=args.output_dir, run_id=session.run_id)
