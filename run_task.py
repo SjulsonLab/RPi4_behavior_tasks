@@ -53,7 +53,20 @@ def parse_args() -> argparse.Namespace:
         help="Override runtime parameter. Can be repeated.",
     )
     parser.add_argument("--no-interactive", action="store_true", help="Disable interactive fallback prompts.")
-    parser.add_argument("--yes", action="store_true", help="Skip preflight confirmation prompt.")
+    parser.add_argument(
+        "--yes",
+        action="store_true",
+        help="Skip preflight confirmation prompt (debug mode only).",
+    )
+    parser.add_argument(
+        "--run-mode",
+        choices=["debug", "production"],
+        default="debug",
+        help=(
+            "Run mode. 'debug' keeps current behavior; 'production' enforces shared-checkout guardrails "
+            "(clean checkout + release ref)."
+        ),
+    )
     parser.add_argument(
         "--allow-experimental",
         action="store_true",
@@ -114,12 +127,15 @@ def main() -> int:
         source_template=str(template_path),
     )
 
+    require_confirmation = True if args.run_mode == "production" else (not args.yes)
+
     git_state = run_preflight(
         repo_root=repo_root,
         protocol=session.protocol,
         preset=session.preset,
         mouse_id=session.mouse_info.mouse_id,
-        require_confirmation=(not args.yes),
+        require_confirmation=require_confirmation,
+        run_mode=args.run_mode,
     )
 
     run_paths = create_run_paths(output_root=args.output_dir, run_id=session.run_id)
@@ -132,8 +148,10 @@ def main() -> int:
         project=session.mouse_info.project,
         started_at=session.started_at,
         git_branch=git_state.branch,
+        git_tag=git_state.exact_tag,
         git_commit=git_state.commit,
         git_dirty=git_state.dirty,
+        run_mode=args.run_mode,
         seed=session.resolved_parameters.get("seed"),
         template_path=session.source_template,
     )

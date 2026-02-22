@@ -4,7 +4,7 @@ Behavioral task protocols for RPi4 behavior boxes, separated from hardware suppo
 
 ## Current status
 Phase 0 scaffolding plus Phase 1/2 baselines are in place, and Phase 3
-experimental staging is now wired:
+experimental staging is now wired. Phase 4 release controls are now available:
 - Shared protocol contract and runtime modules.
 - Preflight branch/commit checks.
 - User/project namespace under `users/`.
@@ -15,12 +15,17 @@ experimental staging is now wired:
 - Matt context templates and wrapper entrypoint under `users/matt_context/`.
 - Experimental Soyoun treadmill and IVSA protocol staging paths.
 - Explicit `--allow-experimental` guard for experimental protocol execution.
+- Production guardrails with `--run-mode production`.
+- Run metadata now records branch, tag, commit, dirty state, and run mode.
+- Shared-checkout operator runbook and contributor ownership guidance.
 
 ## Layout
 - `protocols/`: maintained shared protocol implementations.
 - `runtime/`: session config, preflight, compatibility, logging, and protocol dispatch.
 - `users/`: user/project-owned metadata, templates, presets, and wrappers.
 - `tests/`: smoke/parity scaffolding.
+- `RUNBOOK_SHARED_CHECKOUT.md`: operator playbook for one-checkout-per-Pi operation.
+- `CONTRIBUTING.md`: ownership boundaries and merge policy.
 
 ## Quickstart
 Run the no-op scaffold task:
@@ -33,6 +38,12 @@ Run consolidated go/no-go with shared defaults:
 
 ```bash
 python run_task.py --protocol gonogo --yes --output-dir .task_runs
+```
+
+Run consolidated go/no-go in production mode (guardrails on):
+
+```bash
+python run_task.py --protocol gonogo --run-mode production --output-dir .task_runs
 ```
 
 Run Julia/Duy go-no-go wrapper:

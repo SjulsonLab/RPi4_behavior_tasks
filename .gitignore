@@ -208,6 +208,7 @@ __marimo__/
 
 # Task runtime outputs and generated session artifacts
 .task_runs/
+.task_runs*/
 outputs/
 runs/
 users/*/session_runs/

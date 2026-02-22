@@ -3,6 +3,13 @@
 ## Context
 This plan migrates behavioral task code out of the original monorepo into `RPi4_behavior_tasks` with **architectural cleanup first**.
 
+## Implementation status (as of 2026-02-22)
+1. Phase 0: completed.
+2. Phase 1: completed.
+3. Phase 2: completed.
+4. Phase 3: completed (experimental staging with opt-in execution).
+5. Phase 4: completed (production guardrails, runbook, and contributor boundaries).
+
 Inputs agreed during planning:
 - Priority: architectural cleanup over direct code copy.
 - Active users/tasks to support first: Julia/Duy go-no-go, Matt context tasks.

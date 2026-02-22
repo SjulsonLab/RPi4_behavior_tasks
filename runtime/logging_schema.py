@@ -16,8 +16,10 @@ class RunMetadata:
     project: str
     started_at: str
     git_branch: str
+    git_tag: str | None
     git_commit: str
     git_dirty: bool
+    run_mode: str = "debug"
     seed: Any = None
     template_path: str | None = None
     schema_version: int = 1
