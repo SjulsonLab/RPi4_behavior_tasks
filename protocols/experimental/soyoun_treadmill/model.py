@@ -7,6 +7,7 @@ import time
 from typing import Any, Callable
 
 from protocols.base import BaseProtocol, ProtocolResult
+from runtime.events import BehaviorEvent, make_behavior_event
 
 
 @dataclass
@@ -36,7 +37,7 @@ class SoyounTreadmillProtocol(BaseProtocol):
         super().__init__(session)
         self.trial_records: list[SoyounTreadmillTrialRecord] = []
 
-    def run(self, emit_event: Callable[[str, dict[str, object]], None]) -> ProtocolResult:
+    def run(self, emit_event: Callable[[BehaviorEvent], None]) -> ProtocolResult:
         params = self.session.resolved_parameters
 
         trial_count = self._get_int(params, "trial_count", 80, minimum=1)
@@ -74,25 +75,29 @@ class SoyounTreadmillProtocol(BaseProtocol):
                 outcome = "neutral_lick" if lick_detected else "neutral_pass"
 
             emit_event(
-                "treadmill_trial_start",
-                {
-                    "trial_index": trial_index,
-                    "zone": zone,
-                    "trial_duration_s": trial_duration_s,
-                    "intertrial_interval_s": intertrial_interval_s,
-                },
+                make_behavior_event(
+                    "treadmill_trial_start",
+                    {
+                        "trial_index": trial_index,
+                        "zone": zone,
+                        "trial_duration_s": trial_duration_s,
+                        "intertrial_interval_s": intertrial_interval_s,
+                    },
+                )
             )
             emit_event(
-                "treadmill_trial_end",
-                {
-                    "trial_index": trial_index,
-                    "zone": zone,
-                    "lick_detected": lick_detected,
-                    "speed_cm_s": speed_cm_s,
-                    "distance_cm": distance_cm,
-                    "reward_delivered": reward_delivered,
-                    "outcome": outcome,
-                },
+                make_behavior_event(
+                    "treadmill_trial_end",
+                    {
+                        "trial_index": trial_index,
+                        "zone": zone,
+                        "lick_detected": lick_detected,
+                        "speed_cm_s": speed_cm_s,
+                        "distance_cm": distance_cm,
+                        "reward_delivered": reward_delivered,
+                        "outcome": outcome,
+                    },
+                )
             )
 
             outcomes.append(outcome)
@@ -114,11 +119,13 @@ class SoyounTreadmillProtocol(BaseProtocol):
 
         outcome_counts = dict(Counter(outcomes))
         emit_event(
-            "session_complete",
-            {
-                "total_trials": trial_count,
-                "outcome_counts": outcome_counts,
-            },
+            make_behavior_event(
+                "session_complete",
+                {
+                    "total_trials": trial_count,
+                    "outcome_counts": outcome_counts,
+                },
+            )
         )
 
         return ProtocolResult(

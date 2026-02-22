@@ -4,6 +4,7 @@ from collections import Counter
 from dataclasses import dataclass
 from typing import Any
 
+from runtime.events import BehaviorEvent
 from runtime.runner import run_protocol
 from runtime.session_config import MouseInfo, SessionTemplate, build_session_config
 
@@ -100,13 +101,13 @@ def build_seeded_snapshot(case: BaselineCase, case_name: str) -> dict[str, Any]:
         source_template=f"baseline:{case_name}",
     )
 
-    events: list[tuple[str, dict[str, object]]] = []
+    events: list[BehaviorEvent] = []
 
-    def emit_event(event_type: str, payload: dict[str, object]) -> None:
-        events.append((event_type, payload))
+    def emit_event(event: BehaviorEvent) -> None:
+        events.append(event)
 
     result = run_protocol(session=session, emit_event=emit_event)
-    event_counts = dict(sorted(Counter(event_type for event_type, _payload in events).items()))
+    event_counts = dict(sorted(Counter(event.event_type for event in events).items()))
 
     return {
         "protocol": result["protocol"],
@@ -114,8 +115,8 @@ def build_seeded_snapshot(case: BaselineCase, case_name: str) -> dict[str, Any]:
         "outcome_counts": result["outcome_counts"],
         "outcomes": result["outcomes"],
         "event_type_counts": event_counts,
-        "first_event_type": events[0][0] if events else None,
-        "last_event_type": events[-1][0] if events else None,
+        "first_event_type": events[0].event_type if events else None,
+        "last_event_type": events[-1].event_type if events else None,
     }
 
 

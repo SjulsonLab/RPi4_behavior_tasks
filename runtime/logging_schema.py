@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
 import json
 from pathlib import Path
 from typing import Any
+
+from runtime.events import BehaviorEvent, make_behavior_event
 
 
 @dataclass
@@ -55,11 +56,23 @@ def write_run_metadata(path: Path, metadata: RunMetadata) -> None:
 
 
 
-def append_event(path: Path, event_type: str, payload: dict[str, object], timestamp: str | None = None) -> None:
+def append_event(
+    path: Path,
+    event: BehaviorEvent | str,
+    payload: dict[str, object] | None = None,
+    timestamp: str | None = None,
+) -> None:
+    if isinstance(event, BehaviorEvent):
+        event_obj = event
+    else:
+        if payload is None:
+            raise ValueError("payload is required when append_event is called with an event_type string.")
+        event_obj = make_behavior_event(event_type=event, payload=payload, timestamp=timestamp)
+
     event_record = {
-        "timestamp": timestamp if timestamp else datetime.now(timezone.utc).isoformat(),
-        "event_type": event_type,
-        "payload": payload,
+        "timestamp": event_obj.timestamp,
+        "event_type": event_obj.event_type,
+        "payload": event_obj.payload,
     }
     with path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(event_record, sort_keys=True) + "\n")

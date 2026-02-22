@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Callable
 
 from protocols.context.model import ContextProtocol, trial_record_to_dict
+from runtime.events import BehaviorEvent, make_behavior_event
 from runtime.session_config import SessionConfig
 
 
@@ -16,16 +17,18 @@ def _safe_rate(numerator: int, denominator: int) -> float:
 
 def run_context(
     session: SessionConfig,
-    emit_event: Callable[[str, dict[str, object]], None],
+    emit_event: Callable[[BehaviorEvent], None],
 ) -> dict[str, object]:
     emit_event(
-        "session_start",
-        {
-            "protocol": session.protocol,
-            "preset": session.preset,
-            "mouse_id": session.mouse_info.mouse_id,
-            "project": session.mouse_info.project,
-        },
+        make_behavior_event(
+            "session_start",
+            {
+                "protocol": session.protocol,
+                "preset": session.preset,
+                "mouse_id": session.mouse_info.mouse_id,
+                "project": session.mouse_info.project,
+            },
+        )
     )
 
     protocol = ContextProtocol(session)
@@ -51,7 +54,7 @@ def run_context(
         "right_choice_count": right_choices,
     }
 
-    emit_event("session_summary", summary)
+    emit_event(make_behavior_event("session_summary", summary))
 
     return {
         "protocol": result.protocol,

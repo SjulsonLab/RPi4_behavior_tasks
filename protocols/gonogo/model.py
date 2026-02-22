@@ -7,6 +7,7 @@ import time
 from typing import Any, Callable
 
 from protocols.base import BaseProtocol, ProtocolResult
+from runtime.events import BehaviorEvent, make_behavior_event
 
 
 @dataclass
@@ -33,7 +34,7 @@ class GoNoGoProtocol(BaseProtocol):
         super().__init__(session)
         self.trial_records: list[GoNoGoTrialRecord] = []
 
-    def run(self, emit_event: Callable[[str, dict[str, object]], None]) -> ProtocolResult:
+    def run(self, emit_event: Callable[[BehaviorEvent], None]) -> ProtocolResult:
         params = self.session.resolved_parameters
 
         trial_count = self._get_int(params, "trial_count", 100, minimum=1)
@@ -79,26 +80,30 @@ class GoNoGoProtocol(BaseProtocol):
             iti_s = round(random_source.uniform(iti_min_s, iti_max_s), 4)
 
             emit_event(
-                "trial_start",
-                {
-                    "trial_index": trial_index,
-                    "trial_type": trial_type,
-                    "lockout_length_s": lockout_length_s,
-                    "response_window_s": response_window_s,
-                },
+                make_behavior_event(
+                    "trial_start",
+                    {
+                        "trial_index": trial_index,
+                        "trial_type": trial_type,
+                        "lockout_length_s": lockout_length_s,
+                        "response_window_s": response_window_s,
+                    },
+                )
             )
             emit_event(
-                "trial_end",
-                {
-                    "trial_index": trial_index,
-                    "trial_type": trial_type,
-                    "outcome": outcome,
-                    "response_detected": response_detected,
-                    "response_time_s": response_time_s,
-                    "iti_s": iti_s,
-                    "reward_delivered": reward_delivered,
-                    "punishment_delivered": punishment_delivered,
-                },
+                make_behavior_event(
+                    "trial_end",
+                    {
+                        "trial_index": trial_index,
+                        "trial_type": trial_type,
+                        "outcome": outcome,
+                        "response_detected": response_detected,
+                        "response_time_s": response_time_s,
+                        "iti_s": iti_s,
+                        "reward_delivered": reward_delivered,
+                        "punishment_delivered": punishment_delivered,
+                    },
+                )
             )
 
             self.trial_records.append(
@@ -122,11 +127,13 @@ class GoNoGoProtocol(BaseProtocol):
 
         outcome_counts = dict(Counter(outcomes))
         emit_event(
-            "session_complete",
-            {
-                "total_trials": trial_count,
-                "outcome_counts": outcome_counts,
-            },
+            make_behavior_event(
+                "session_complete",
+                {
+                    "total_trials": trial_count,
+                    "outcome_counts": outcome_counts,
+                },
+            )
         )
 
         return ProtocolResult(

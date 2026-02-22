@@ -15,6 +15,7 @@ from runtime.logging_schema import (
     write_result,
     write_run_metadata,
 )
+from runtime.events import BehaviorEvent
 from runtime.preflight import run_preflight
 from runtime.quality_checks import evaluate_run_quality
 from runtime.release_policy import DEFAULT_RELEASE_POLICY, ReleasePolicy
@@ -204,8 +205,8 @@ def main() -> int:
     )
     write_run_metadata(run_paths.metadata_path, metadata)
 
-    def emit_event(event_type: str, payload: dict[str, object]) -> None:
-        append_event(run_paths.events_path, event_type=event_type, payload=payload)
+    def emit_event(event: BehaviorEvent) -> None:
+        append_event(run_paths.events_path, event)
 
     result = run_protocol(session=session, emit_event=emit_event)
     write_result(run_paths.result_path, result)

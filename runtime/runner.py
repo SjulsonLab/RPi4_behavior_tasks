@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Callable
 
+from runtime.events import BehaviorEvent
 from runtime.session_config import SessionConfig
 
 
@@ -23,7 +24,7 @@ IVSA_ALIASES = {"ivsa", "cue_ivsa"}
 
 def run_protocol(
     session: SessionConfig,
-    emit_event: Callable[[str, dict[str, object]], None],
+    emit_event: Callable[[BehaviorEvent], None],
 ) -> dict[str, object]:
     if session.protocol == "noop":
         from protocols.noop.runner import run_noop

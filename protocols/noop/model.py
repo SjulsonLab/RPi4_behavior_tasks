@@ -5,12 +5,13 @@ import random
 from typing import Callable
 
 from protocols.base import BaseProtocol, ProtocolResult
+from runtime.events import BehaviorEvent, make_behavior_event
 
 
 class NoOpProtocol(BaseProtocol):
     OUTCOME_OPTIONS = ("noop_ok", "noop_retry", "noop_idle")
 
-    def run(self, emit_event: Callable[[str, dict[str, object]], None]) -> ProtocolResult:
+    def run(self, emit_event: Callable[[BehaviorEvent], None]) -> ProtocolResult:
         seed = int(self.session.resolved_parameters.get("seed", 0))
         trial_count = int(self.session.resolved_parameters.get("trial_count", 5))
 
@@ -22,21 +23,25 @@ class NoOpProtocol(BaseProtocol):
             latency_ms = random_source.randint(25, 250)
             outcomes.append(outcome)
             emit_event(
-                "trial",
-                {
-                    "trial_index": trial_index,
-                    "outcome": outcome,
-                    "latency_ms": latency_ms,
-                },
+                make_behavior_event(
+                    "trial",
+                    {
+                        "trial_index": trial_index,
+                        "outcome": outcome,
+                        "latency_ms": latency_ms,
+                    },
+                )
             )
 
         counts = dict(Counter(outcomes))
         emit_event(
-            "session_complete",
-            {
-                "total_trials": trial_count,
-                "outcome_counts": counts,
-            },
+            make_behavior_event(
+                "session_complete",
+                {
+                    "total_trials": trial_count,
+                    "outcome_counts": counts,
+                },
+            )
         )
 
         return ProtocolResult(

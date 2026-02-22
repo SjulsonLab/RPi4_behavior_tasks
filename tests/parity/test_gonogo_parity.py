@@ -46,7 +46,7 @@ class GoNoGoParityTest(unittest.TestCase):
             },
             source_template="inline",
         )
-        return run_protocol(session=session, emit_event=lambda _event, _payload: None)
+        return run_protocol(session=session, emit_event=lambda _event: None)
 
     def test_same_seed_produces_identical_outcomes(self) -> None:
         result_a = self._run_seeded(seed=1234)

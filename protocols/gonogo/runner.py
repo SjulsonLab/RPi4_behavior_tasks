@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Callable
 
 from protocols.gonogo.model import GoNoGoProtocol, trial_record_to_dict
+from runtime.events import BehaviorEvent, make_behavior_event
 from runtime.session_config import SessionConfig
 
 
@@ -16,16 +17,18 @@ def _safe_rate(numerator: int, denominator: int) -> float:
 
 def run_gonogo(
     session: SessionConfig,
-    emit_event: Callable[[str, dict[str, object]], None],
+    emit_event: Callable[[BehaviorEvent], None],
 ) -> dict[str, object]:
     emit_event(
-        "session_start",
-        {
-            "protocol": session.protocol,
-            "preset": session.preset,
-            "mouse_id": session.mouse_info.mouse_id,
-            "project": session.mouse_info.project,
-        },
+        make_behavior_event(
+            "session_start",
+            {
+                "protocol": session.protocol,
+                "preset": session.preset,
+                "mouse_id": session.mouse_info.mouse_id,
+                "project": session.mouse_info.project,
+            },
+        )
     )
 
     protocol = GoNoGoProtocol(session)
@@ -46,7 +49,7 @@ def run_gonogo(
         "false_alarm_rate_on_nogo_trials": _safe_rate(fa_count, nogo_trials),
     }
 
-    emit_event("session_summary", summary)
+    emit_event(make_behavior_event("session_summary", summary))
 
     return {
         "protocol": result.protocol,

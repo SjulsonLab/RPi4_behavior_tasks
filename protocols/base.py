@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Callable
 
+from runtime.events import BehaviorEvent
 from runtime.session_config import SessionConfig
 
 
@@ -21,5 +22,5 @@ class BaseProtocol(ABC):
         self.session = session
 
     @abstractmethod
-    def run(self, emit_event: Callable[[str, dict[str, object]], None]) -> ProtocolResult:
+    def run(self, emit_event: Callable[[BehaviorEvent], None]) -> ProtocolResult:
         """Execute one session of the protocol and return aggregate outcomes."""

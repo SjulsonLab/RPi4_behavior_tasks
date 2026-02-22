@@ -7,6 +7,7 @@ import time
 from typing import Any, Callable
 
 from protocols.base import BaseProtocol, ProtocolResult
+from runtime.events import BehaviorEvent, make_behavior_event
 
 
 @dataclass
@@ -34,7 +35,7 @@ class IVSAProtocol(BaseProtocol):
         super().__init__(session)
         self.trial_records: list[IVSATrialRecord] = []
 
-    def run(self, emit_event: Callable[[str, dict[str, object]], None]) -> ProtocolResult:
+    def run(self, emit_event: Callable[[BehaviorEvent], None]) -> ProtocolResult:
         params = self.session.resolved_parameters
 
         trial_count = self._get_int(params, "trial_count", 120, minimum=1)
@@ -82,22 +83,26 @@ class IVSAProtocol(BaseProtocol):
                 outcome = "inactive_press" if press_detected else "inactive_no_press"
 
             emit_event(
-                "ivsa_trial_start",
-                {
-                    "trial_index": trial_index,
-                    "lever_type": lever_type,
-                    "timeout_s": timeout_s,
-                },
+                make_behavior_event(
+                    "ivsa_trial_start",
+                    {
+                        "trial_index": trial_index,
+                        "lever_type": lever_type,
+                        "timeout_s": timeout_s,
+                    },
+                )
             )
             emit_event(
-                "ivsa_trial_end",
-                {
-                    "trial_index": trial_index,
-                    "lever_type": lever_type,
-                    "press_detected": press_detected,
-                    "infusion_delivered": infusion_delivered,
-                    "outcome": outcome,
-                },
+                make_behavior_event(
+                    "ivsa_trial_end",
+                    {
+                        "trial_index": trial_index,
+                        "lever_type": lever_type,
+                        "press_detected": press_detected,
+                        "infusion_delivered": infusion_delivered,
+                        "outcome": outcome,
+                    },
+                )
             )
 
             outcomes.append(outcome)
@@ -117,11 +122,13 @@ class IVSAProtocol(BaseProtocol):
 
         outcome_counts = dict(Counter(outcomes))
         emit_event(
-            "session_complete",
-            {
-                "total_trials": trial_count,
-                "outcome_counts": outcome_counts,
-            },
+            make_behavior_event(
+                "session_complete",
+                {
+                    "total_trials": trial_count,
+                    "outcome_counts": outcome_counts,
+                },
+            )
         )
 
         return ProtocolResult(

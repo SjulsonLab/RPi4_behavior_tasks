@@ -7,6 +7,7 @@ import time
 from typing import Any, Callable
 
 from protocols.base import BaseProtocol, ProtocolResult
+from runtime.events import BehaviorEvent, make_behavior_event
 
 
 @dataclass
@@ -38,7 +39,7 @@ class ContextProtocol(BaseProtocol):
         super().__init__(session)
         self.trial_records: list[ContextTrialRecord] = []
 
-    def run(self, emit_event: Callable[[str, dict[str, object]], None]) -> ProtocolResult:
+    def run(self, emit_event: Callable[[BehaviorEvent], None]) -> ProtocolResult:
         params = self.session.resolved_parameters
 
         trial_count = self._get_int(params, "trial_count", 180, minimum=1)
@@ -69,7 +70,7 @@ class ContextProtocol(BaseProtocol):
         outcomes: list[str] = []
         correct_trials_in_patch = 0
 
-        emit_event("context_start", {"start_patch": active_patch})
+        emit_event(make_behavior_event("context_start", {"start_patch": active_patch}))
 
         for trial_index in range(1, trial_count + 1):
             active_patch_before = active_patch
@@ -124,18 +125,20 @@ class ContextProtocol(BaseProtocol):
             active_patch_after = active_patch
 
             emit_event(
-                "context_trial",
-                {
-                    "trial_index": trial_index,
-                    "active_patch_before": active_patch_before,
-                    "active_patch_after": active_patch_after,
-                    "choice_side": choice_side,
-                    "response_detected": response_detected,
-                    "correct_choice": correct_choice,
-                    "reward_delivered": reward_delivered,
-                    "outcome": outcome,
-                    "switched_patch": switched_patch,
-                },
+                make_behavior_event(
+                    "context_trial",
+                    {
+                        "trial_index": trial_index,
+                        "active_patch_before": active_patch_before,
+                        "active_patch_after": active_patch_after,
+                        "choice_side": choice_side,
+                        "response_detected": response_detected,
+                        "correct_choice": correct_choice,
+                        "reward_delivered": reward_delivered,
+                        "outcome": outcome,
+                        "switched_patch": switched_patch,
+                    },
+                )
             )
 
             self.trial_records.append(
@@ -157,7 +160,12 @@ class ContextProtocol(BaseProtocol):
                 time.sleep(intertrial_interval_s)
 
         outcome_counts = dict(Counter(outcomes))
-        emit_event("context_complete", {"total_trials": trial_count, "outcome_counts": outcome_counts})
+        emit_event(
+            make_behavior_event(
+                "context_complete",
+                {"total_trials": trial_count, "outcome_counts": outcome_counts},
+            )
+        )
 
         return ProtocolResult(
             protocol=self.session.protocol,

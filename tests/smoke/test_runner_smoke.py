@@ -9,6 +9,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from runtime.runner import run_protocol
+from runtime.events import BehaviorEvent
 from runtime.session_config import MouseInfo, SessionTemplate, build_session_config
 
 
@@ -29,10 +30,10 @@ class RunnerSmokeTest(unittest.TestCase):
             source_template="inline",
         )
 
-        events: list[tuple[str, dict[str, object]]] = []
+        events: list[BehaviorEvent] = []
 
-        def emit_event(event_type: str, payload: dict[str, object]) -> None:
-            events.append((event_type, payload))
+        def emit_event(event: BehaviorEvent) -> None:
+            events.append(event)
 
         result = run_protocol(session=session, emit_event=emit_event)
 
@@ -40,7 +41,7 @@ class RunnerSmokeTest(unittest.TestCase):
         self.assertEqual(result["total_trials"], 4)
         self.assertEqual(sum(result["outcome_counts"].values()), 4)
         self.assertTrue(events)
-        self.assertEqual(events[0][0], "session_start")
+        self.assertEqual(events[0].event_type, "session_start")
 
     def test_gonogo_runner_executes(self) -> None:
         template = SessionTemplate(
@@ -69,10 +70,10 @@ class RunnerSmokeTest(unittest.TestCase):
             source_template="inline",
         )
 
-        events: list[tuple[str, dict[str, object]]] = []
+        events: list[BehaviorEvent] = []
 
-        def emit_event(event_type: str, payload: dict[str, object]) -> None:
-            events.append((event_type, payload))
+        def emit_event(event: BehaviorEvent) -> None:
+            events.append(event)
 
         result = run_protocol(session=session, emit_event=emit_event)
 
@@ -81,7 +82,7 @@ class RunnerSmokeTest(unittest.TestCase):
         self.assertEqual(sum(result["outcome_counts"].values()), 10)
         self.assertIn("summary", result)
         self.assertTrue(events)
-        self.assertEqual(events[0][0], "session_start")
+        self.assertEqual(events[0].event_type, "session_start")
 
     def test_context_runner_executes(self) -> None:
         template = SessionTemplate(
@@ -111,10 +112,10 @@ class RunnerSmokeTest(unittest.TestCase):
             source_template="inline",
         )
 
-        events: list[tuple[str, dict[str, object]]] = []
+        events: list[BehaviorEvent] = []
 
-        def emit_event(event_type: str, payload: dict[str, object]) -> None:
-            events.append((event_type, payload))
+        def emit_event(event: BehaviorEvent) -> None:
+            events.append(event)
 
         result = run_protocol(session=session, emit_event=emit_event)
 
@@ -123,7 +124,7 @@ class RunnerSmokeTest(unittest.TestCase):
         self.assertEqual(sum(result["outcome_counts"].values()), 12)
         self.assertIn("summary", result)
         self.assertTrue(events)
-        self.assertEqual(events[0][0], "session_start")
+        self.assertEqual(events[0].event_type, "session_start")
 
 
 if __name__ == "__main__":
