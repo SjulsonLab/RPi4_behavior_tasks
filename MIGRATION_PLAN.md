@@ -13,6 +13,8 @@ Inputs agreed during planning:
 - Task-source precedence: runnable/sane first, newest commit date as tie-breaker.
 - Runtime compatibility: keep an interactive compatibility layer during transition.
 - Validation target: log parity and trial outcome parity, with seeded and distribution checks for random tasks.
+- Add `users/` namespace for user/project-specific configuration and metadata.
+- Keep `mouse_info` versioned in Git; keep per-session runtime files out of Git.
 
 ## Constraints and Operating Model
 ### Deployment model on Pis
@@ -48,6 +50,19 @@ Initial structure for `RPi4_behavior_tasks`:
 RPi4_behavior_tasks/
   README.md
   MIGRATION_PLAN.md
+  users/
+    julia_duy/
+      mouse_info/
+      session_templates/
+      presets/
+      wrappers/
+    matt_context/
+      mouse_info/
+      session_templates/
+      presets/
+      wrappers/
+    shared/
+      README.md
   protocols/
     gonogo/
       model.py
@@ -85,7 +100,13 @@ Current branch history has many near-duplicate task scripts. Migration will:
 2. Move behavior differences to preset configuration files.
 3. Keep legacy naming as aliases during transition.
 
-### 2) Keep a compatibility layer during transition
+### 2) Hybrid core + users model
+1. Core runnable protocols remain in `protocols/` and are the default maintained path.
+2. User/project-specific files live under `users/<project_or_user>/`.
+3. User-owned protocol forks are allowed only when needed, under `users/<project_or_user>/wrappers/` or a dedicated local protocol subpath, and should be treated as experimental until promoted.
+4. Merge policy expectation: user branches should primarily touch their own `users/<...>/` paths and only touch shared core with review.
+
+### 3) Keep a compatibility layer during transition
 Support both paths initially:
 1. Interactive prompts (`input`) for users who rely on current flow.
 2. Config/CLI execution for reproducible runs and automation.
@@ -94,18 +115,24 @@ Planned behavior:
 - If CLI/config values are present, use non-interactive mode.
 - If missing, fall back to interactive prompts.
 
-### 3) Standardize session and output metadata
+### 4) Standardize session and output metadata
 Every run writes consistent metadata:
 1. Task family and preset name.
 2. Git branch and commit hash.
 3. Random seed (if used).
 4. Session start/end timestamps.
 
+### 5) Data sync policy for many Pis
+1. Version in Git: protocol code, presets, `mouse_info`, and session templates.
+2. Do not version in Git: per-session generated session files, outputs, timestamps, and daily mutable runtime artifacts.
+3. Each run records which template and mouse record were used.
+
 ## Migration Phases
 ### Phase 0: Foundation
-1. Create core package layout (`protocols/`, `runtime/`, `tests/`).
+1. Create core package layout (`protocols/`, `runtime/`, `tests/`, `users/`).
 2. Add common runner contract and session config schema.
 3. Add preflight command to print branch/commit and active preset.
+4. Add user/project folder conventions and template loaders.
 
 Deliverable:
 - Runnable skeleton with one no-op sample protocol.
@@ -113,7 +140,7 @@ Deliverable:
 ### Phase 1: Go/No-Go (Julia/Duy first)
 1. Select canonical go/no-go source files using runnable/sane then newest tie-breaker.
 2. Implement unified go/no-go protocol.
-3. Add presets for Julia/Duy operating modes.
+3. Add presets and templates under `users/julia_duy/`.
 4. Keep legacy alias runner names mapping to presets.
 
 Validation:
@@ -123,7 +150,7 @@ Validation:
 
 ### Phase 2: Context (Matt first)
 1. Port Matt context model/presenter style into cleaned protocol package.
-2. Extract context variants into presets.
+2. Extract context variants into presets and user templates under `users/matt_context/`.
 3. Ensure compatibility-layer execution path remains available.
 
 Validation:
@@ -143,6 +170,7 @@ Validation:
 1. Add release tags and protected release branch policy.
 2. Add pre-run guardrails for shared-checkout mode.
 3. Add operator runbook for branch hygiene on shared Pis.
+4. Add contributor guidance for `users/` ownership boundaries.
 
 ## Parity and Test Strategy
 ### Deterministic parity
@@ -184,6 +212,12 @@ Mitigation:
 1. Preserve interactive path through compatibility layer.
 2. Add opt-in non-interactive mode without forcing immediate behavior change.
 
+### Risk: user forks drift away from shared protocols
+Mitigation:
+1. Keep shared protocols as primary maintained implementations.
+2. Treat user-local protocol overrides as experimental unless promoted.
+3. Periodically upstream stable user logic into `protocols/`.
+
 ## Definition of Done for Initial Migration
 1. Go/no-go and context families run end-to-end from `RPi4_behavior_tasks`.
 2. Required parity checks pass:
@@ -193,9 +227,11 @@ Mitigation:
 3. `obsolete/` content excluded.
 4. Soyoun treadmill and IVSA staged under experimental only.
 5. Shared-checkout preflight guardrails and runbook documented.
+6. `users/` hierarchy active with Git-versioned `mouse_info` and session templates.
 
 ## Immediate Next Actions
 1. Implement Phase 0 skeleton in this repo.
 2. Port and validate go/no-go family (Julia/Duy path first).
 3. Port and validate Matt context family.
 4. Stage Soyoun treadmill and IVSA as experimental tracks.
+5. Add initial `users/julia_duy/` and `users/matt_context/` template folders.
