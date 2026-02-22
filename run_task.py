@@ -11,10 +11,12 @@ from runtime.logging_schema import (
     RunMetadata,
     append_event,
     create_run_paths,
+    write_quality_report,
     write_result,
     write_run_metadata,
 )
 from runtime.preflight import run_preflight
+from runtime.quality_checks import evaluate_run_quality
 from runtime.release_policy import DEFAULT_RELEASE_POLICY, ReleasePolicy
 from runtime.runner import EXPERIMENTAL_PROTOCOLS, SUPPORTED_PROTOCOLS, run_protocol
 from runtime.session_config import build_session_config, load_mouse_info, load_session_template
@@ -88,6 +90,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Skip run artifact validation (debug-only escape hatch).",
     )
+    parser.add_argument(
+        "--no-validate-quality",
+        action="store_true",
+        help="Skip semantic run quality checks (debug-only escape hatch).",
+    )
     return parser.parse_args()
 
 
@@ -120,9 +127,15 @@ def resolve_release_policy(require_release_tag: bool) -> ReleasePolicy:
     return replace(DEFAULT_RELEASE_POLICY, require_release_tag_in_production=True)
 
 
-def validate_runtime_options(run_mode: str, no_validate_artifacts: bool) -> None:
+def validate_runtime_options(
+    run_mode: str,
+    no_validate_artifacts: bool,
+    no_validate_quality: bool,
+) -> None:
     if run_mode == "production" and no_validate_artifacts:
         raise ValueError("Artifact validation cannot be disabled in production mode.")
+    if run_mode == "production" and no_validate_quality:
+        raise ValueError("Run quality validation cannot be disabled in production mode.")
 
 
 def main() -> int:
@@ -156,7 +169,11 @@ def main() -> int:
 
     require_confirmation = True if args.run_mode == "production" else (not args.yes)
     release_policy = resolve_release_policy(require_release_tag=args.require_release_tag)
-    validate_runtime_options(run_mode=args.run_mode, no_validate_artifacts=args.no_validate_artifacts)
+    validate_runtime_options(
+        run_mode=args.run_mode,
+        no_validate_artifacts=args.no_validate_artifacts,
+        no_validate_quality=args.no_validate_quality,
+    )
 
     git_state = run_preflight(
         repo_root=repo_root,
@@ -198,6 +215,17 @@ def main() -> int:
         if validation_errors:
             joined = "\n".join(f"- {error}" for error in validation_errors)
             raise RuntimeError(f"Run artifact validation failed:\n{joined}")
+
+    quality_report = evaluate_run_quality(run_paths.run_dir)
+    write_quality_report(run_paths.quality_report_path, quality_report)
+    if not args.no_validate_quality and quality_report["status"] == "FAIL":
+        quality_errors = [
+            finding["message"]
+            for finding in quality_report.get("findings", [])
+            if finding.get("level") == "error"
+        ]
+        joined = "\n".join(f"- {error}" for error in quality_errors)
+        raise RuntimeError(f"Run quality validation failed:\n{joined}")
 
     print(f"Run complete: {session.run_id}")
     print(f"Protocol: {session.protocol}")

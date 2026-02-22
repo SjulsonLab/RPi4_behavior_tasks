@@ -10,6 +10,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from runtime.artifact_validation import validate_run_directory
+from runtime.quality_checks import evaluate_run_quality
 
 
 def parse_args() -> argparse.Namespace:
@@ -25,20 +26,40 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    overall_errors = 0
+    overall_failures = 0
 
     for run_dir in args.run_dirs:
         resolved = run_dir.resolve()
-        errors = validate_run_directory(resolved)
-        if errors:
-            overall_errors += len(errors)
-            print(f"[FAIL] {resolved}")
-            for error in errors:
+        artifact_errors = validate_run_directory(resolved)
+        if artifact_errors:
+            overall_failures += 1
+            print(f"[FAIL] {resolved} (artifact structure)")
+            for error in artifact_errors:
                 print(f"  - {error}")
+            continue
+
+        quality_report = evaluate_run_quality(resolved)
+        quality_status = quality_report.get("status")
+        findings = quality_report.get("findings", [])
+
+        if quality_status == "FAIL":
+            overall_failures += 1
+            print(f"[FAIL] {resolved} (run quality)")
+            for finding in findings:
+                level = str(finding.get("level", "unknown")).upper()
+                message = finding.get("message", "")
+                print(f"  - [{level}] {message}")
+            continue
+
+        if quality_status == "WARN":
+            print(f"[WARN] {resolved}")
+            for finding in findings:
+                if finding.get("level") == "warning":
+                    print(f"  - {finding.get('message', '')}")
         else:
             print(f"[PASS] {resolved}")
 
-    return 1 if overall_errors else 0
+    return 1 if overall_failures else 0
 
 
 if __name__ == "__main__":

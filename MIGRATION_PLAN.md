@@ -11,6 +11,7 @@ This plan migrates behavioral task code out of the original monorepo into `RPi4_
 5. Phase 4: completed (production guardrails, runbook, and contributor boundaries).
 6. Phase 5: completed (optional tag-strict production lock and CI automation).
 7. Phase 6: completed (artifact integrity validation and verifier CLI).
+8. Phase 7: completed (semantic run-quality checks and quality reports).
 
 Inputs agreed during planning:
 - Priority: architectural cleanup over direct code copy.
@@ -190,6 +191,11 @@ Validation:
 1. Add runtime validation of run artifacts (metadata, events, results).
 2. Add a CLI verification tool for existing run directories.
 3. Add tests covering valid and invalid artifact structures.
+
+### Phase 7: Semantic Run Quality Gates
+1. Add protocol-aware semantic quality checks across events and results.
+2. Write a `quality_report.json` artifact per run.
+3. Enforce quality failures as run failures unless explicitly disabled in debug mode.
 
 ## Parity and Test Strategy
 ### Deterministic parity

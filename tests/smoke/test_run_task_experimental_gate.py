@@ -31,11 +31,27 @@ class RunTaskExperimentalGateTest(unittest.TestCase):
         self.assertTrue(policy.require_release_tag_in_production)
 
     def test_runtime_options_allow_skip_validation_in_debug(self) -> None:
-        run_task.validate_runtime_options(run_mode="debug", no_validate_artifacts=True)
+        run_task.validate_runtime_options(
+            run_mode="debug",
+            no_validate_artifacts=True,
+            no_validate_quality=True,
+        )
 
     def test_runtime_options_block_skip_validation_in_production(self) -> None:
         with self.assertRaises(ValueError):
-            run_task.validate_runtime_options(run_mode="production", no_validate_artifacts=True)
+            run_task.validate_runtime_options(
+                run_mode="production",
+                no_validate_artifacts=True,
+                no_validate_quality=False,
+            )
+
+    def test_runtime_options_block_skip_quality_in_production(self) -> None:
+        with self.assertRaises(ValueError):
+            run_task.validate_runtime_options(
+                run_mode="production",
+                no_validate_artifacts=False,
+                no_validate_quality=True,
+            )
 
 
 if __name__ == "__main__":

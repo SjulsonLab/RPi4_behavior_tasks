@@ -59,6 +59,7 @@ Runs are validated automatically after completion. To re-check an existing run:
 python tools/verify_run_artifacts.py .task_runs/<run_id>
 ```
 Note: production mode does not allow disabling artifact validation.
+Note: production mode does not allow disabling semantic run-quality validation.
 
 ## Release cadence recommendation
 1. Validate on a staging Pi in debug mode.

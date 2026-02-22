@@ -31,6 +31,7 @@ class RunPaths:
     metadata_path: Path
     events_path: Path
     result_path: Path
+    quality_report_path: Path
 
 
 
@@ -43,6 +44,7 @@ def create_run_paths(output_root: Path, run_id: str) -> RunPaths:
         metadata_path=run_dir / "run_metadata.json",
         events_path=run_dir / "events.jsonl",
         result_path=run_dir / "result.json",
+        quality_report_path=run_dir / "quality_report.json",
     )
 
 
@@ -67,3 +69,9 @@ def append_event(path: Path, event_type: str, payload: dict[str, object], timest
 def write_result(path: Path, result: dict[str, Any]) -> None:
     with path.open("w", encoding="utf-8") as handle:
         json.dump(result, handle, indent=2, sort_keys=True)
+
+
+
+def write_quality_report(path: Path, report: dict[str, Any]) -> None:
+    with path.open("w", encoding="utf-8") as handle:
+        json.dump(report, handle, indent=2, sort_keys=True)
