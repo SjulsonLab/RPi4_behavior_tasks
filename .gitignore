@@ -205,3 +205,10 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Task runtime outputs and generated session artifacts
+.task_runs/
+outputs/
+runs/
+users/*/session_runs/
+users/*/session_generated/

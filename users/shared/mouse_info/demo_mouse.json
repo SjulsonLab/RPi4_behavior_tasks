@@ -1,0 +1,8 @@
+{
+  "mouse_id": "demo_mouse",
+  "project": "shared",
+  "species": "mouse",
+  "sex": "unknown",
+  "genotype": "unknown",
+  "notes": "Template mouse metadata for smoke testing."
+}

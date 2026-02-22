@@ -1,0 +1,13 @@
+{
+  "protocol": "noop",
+  "preset": "shared_noop_default",
+  "max_minutes": 30,
+  "required_parameters": [
+    "trial_count",
+    "seed"
+  ],
+  "parameters": {
+    "trial_count": 5,
+    "seed": 123
+  }
+}
