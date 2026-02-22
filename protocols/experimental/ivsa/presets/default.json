@@ -1,0 +1,16 @@
+{
+  "protocol": "ivsa",
+  "preset": "ivsa_default_experimental",
+  "max_minutes": 120,
+  "required_parameters": [],
+  "parameters": {
+    "trial_count": 120,
+    "active_lever_probability": 0.5,
+    "press_probability_active": 0.4,
+    "press_probability_inactive": 0.1,
+    "infusion_probability_given_active_press": 1.0,
+    "timeout_s": 20.0,
+    "seed": 123,
+    "enforce_timing": false
+  }
+}

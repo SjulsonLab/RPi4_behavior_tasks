@@ -13,7 +13,7 @@ from runtime.logging_schema import (
     write_run_metadata,
 )
 from runtime.preflight import run_preflight
-from runtime.runner import SUPPORTED_PROTOCOLS, run_protocol
+from runtime.runner import EXPERIMENTAL_PROTOCOLS, SUPPORTED_PROTOCOLS, run_protocol
 from runtime.session_config import build_session_config, load_mouse_info, load_session_template
 
 
@@ -23,6 +23,10 @@ DEFAULT_TEMPLATE_BY_PROTOCOL = {
     "go_nogo": Path("users/shared/session_templates/gonogo_default.json"),
     "context": Path("users/shared/session_templates/context_default.json"),
     "matt_context": Path("users/shared/session_templates/context_default.json"),
+    "soyoun_treadmill": Path("users/shared/session_templates/soyoun_treadmill_experimental.json"),
+    "soyoun_treadmill_experimental": Path("users/shared/session_templates/soyoun_treadmill_experimental.json"),
+    "ivsa": Path("users/shared/session_templates/ivsa_experimental.json"),
+    "cue_ivsa": Path("users/shared/session_templates/ivsa_experimental.json"),
 }
 DEFAULT_MOUSE_INFO = Path("users/shared/mouse_info/demo_mouse.json")
 
@@ -32,7 +36,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--protocol",
         default=None,
-        help=f"Protocol name. Supported: {', '.join(SUPPORTED_PROTOCOLS)}. If omitted, use template protocol.",
+        help=(
+            f"Protocol name. Maintained: {', '.join(SUPPORTED_PROTOCOLS)}. "
+            f"Experimental (requires --allow-experimental): {', '.join(EXPERIMENTAL_PROTOCOLS)}. "
+            "If omitted, use template protocol."
+        ),
     )
     parser.add_argument("--template", type=Path, help="Path to session template JSON file.")
     parser.add_argument("--mouse-info", type=Path, help="Path to mouse info JSON file.")
@@ -46,6 +54,11 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--no-interactive", action="store_true", help="Disable interactive fallback prompts.")
     parser.add_argument("--yes", action="store_true", help="Skip preflight confirmation prompt.")
+    parser.add_argument(
+        "--allow-experimental",
+        action="store_true",
+        help="Allow running experimental protocols.",
+    )
     return parser.parse_args()
 
 
@@ -64,6 +77,14 @@ def resolve_mouse_info_path(repo_root: Path, mouse_info_arg: Path | None) -> Pat
     return (repo_root / DEFAULT_MOUSE_INFO).resolve()
 
 
+def validate_protocol_access(protocol: str, allow_experimental: bool) -> None:
+    if protocol in EXPERIMENTAL_PROTOCOLS and not allow_experimental:
+        raise ValueError(
+            f"Protocol '{protocol}' is experimental and excluded by default. "
+            "Re-run with --allow-experimental to continue."
+        )
+
+
 def main() -> int:
     args = parse_args()
     repo_root = Path(__file__).resolve().parent
@@ -76,6 +97,8 @@ def main() -> int:
 
     # Allow CLI protocol override while reusing a template as a parameter source.
     protocol_name = args.protocol if args.protocol else template.protocol
+    validate_protocol_access(protocol=protocol_name, allow_experimental=args.allow_experimental)
+
     cli_overrides = parse_cli_overrides(args.set)
     parameters = resolve_runtime_parameters(
         template=template,

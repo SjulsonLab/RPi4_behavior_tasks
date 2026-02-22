@@ -1,0 +1,18 @@
+{
+  "protocol": "soyoun_treadmill",
+  "preset": "soyoun_treadmill_default_experimental",
+  "max_minutes": 60,
+  "required_parameters": [],
+  "parameters": {
+    "trial_count": 80,
+    "reward_zone_probability": 0.35,
+    "lick_probability_reward_zone": 0.8,
+    "lick_probability_neutral_zone": 0.2,
+    "speed_mean_cm_s": 18.0,
+    "speed_std_cm_s": 3.0,
+    "trial_duration_s": 2.0,
+    "intertrial_interval_s": 1.0,
+    "seed": 123,
+    "enforce_timing": false
+  }
+}
