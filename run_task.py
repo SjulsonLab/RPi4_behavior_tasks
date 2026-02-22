@@ -5,6 +5,7 @@ import argparse
 from dataclasses import replace
 from pathlib import Path
 
+from runtime.artifact_validation import validate_run_directory
 from runtime.compatibility_layer import parse_cli_overrides, resolve_runtime_parameters
 from runtime.logging_schema import (
     RunMetadata,
@@ -82,6 +83,11 @@ def parse_args() -> argparse.Namespace:
             "(recommended on shared Pis)."
         ),
     )
+    parser.add_argument(
+        "--no-validate-artifacts",
+        action="store_true",
+        help="Skip run artifact validation (debug-only escape hatch).",
+    )
     return parser.parse_args()
 
 
@@ -112,6 +118,11 @@ def resolve_release_policy(require_release_tag: bool) -> ReleasePolicy:
     if not require_release_tag:
         return DEFAULT_RELEASE_POLICY
     return replace(DEFAULT_RELEASE_POLICY, require_release_tag_in_production=True)
+
+
+def validate_runtime_options(run_mode: str, no_validate_artifacts: bool) -> None:
+    if run_mode == "production" and no_validate_artifacts:
+        raise ValueError("Artifact validation cannot be disabled in production mode.")
 
 
 def main() -> int:
@@ -145,6 +156,7 @@ def main() -> int:
 
     require_confirmation = True if args.run_mode == "production" else (not args.yes)
     release_policy = resolve_release_policy(require_release_tag=args.require_release_tag)
+    validate_runtime_options(run_mode=args.run_mode, no_validate_artifacts=args.no_validate_artifacts)
 
     git_state = run_preflight(
         repo_root=repo_root,
@@ -180,6 +192,12 @@ def main() -> int:
 
     result = run_protocol(session=session, emit_event=emit_event)
     write_result(run_paths.result_path, result)
+
+    if not args.no_validate_artifacts:
+        validation_errors = validate_run_directory(run_paths.run_dir)
+        if validation_errors:
+            joined = "\n".join(f"- {error}" for error in validation_errors)
+            raise RuntimeError(f"Run artifact validation failed:\n{joined}")
 
     print(f"Run complete: {session.run_id}")
     print(f"Protocol: {session.protocol}")

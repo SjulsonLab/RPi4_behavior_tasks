@@ -4,7 +4,7 @@ Behavioral task protocols for RPi4 behavior boxes, separated from hardware suppo
 
 ## Current status
 Phase 0 scaffolding plus Phase 1/2 baselines are in place, and Phase 3
-experimental staging is now wired. Phase 4/5 release controls are now available:
+experimental staging is now wired. Phase 4/5/6 release controls are now available:
 - Shared protocol contract and runtime modules.
 - Preflight branch/commit checks.
 - User/project namespace under `users/`.
@@ -20,6 +20,8 @@ experimental staging is now wired. Phase 4/5 release controls are now available:
 - Run metadata now records branch, tag, commit, dirty state, and run mode.
 - Shared-checkout operator runbook and contributor ownership guidance.
 - CI workflow runs smoke/parity tests on push and pull requests.
+- Automatic run-artifact structural validation after each task run.
+  - Debug-only escape hatch: `--no-validate-artifacts`
 
 ## Layout
 - `protocols/`: maintained shared protocol implementations.
@@ -88,4 +90,10 @@ Run tests:
 
 ```bash
 python -m unittest discover -s tests -p 'test_*.py'
+```
+
+Validate an existing run directory:
+
+```bash
+python tools/verify_run_artifacts.py .task_runs/<run_id>
 ```

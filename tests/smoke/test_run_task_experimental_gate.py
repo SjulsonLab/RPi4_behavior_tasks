@@ -30,6 +30,13 @@ class RunTaskExperimentalGateTest(unittest.TestCase):
         policy = run_task.resolve_release_policy(require_release_tag=True)
         self.assertTrue(policy.require_release_tag_in_production)
 
+    def test_runtime_options_allow_skip_validation_in_debug(self) -> None:
+        run_task.validate_runtime_options(run_mode="debug", no_validate_artifacts=True)
+
+    def test_runtime_options_block_skip_validation_in_production(self) -> None:
+        with self.assertRaises(ValueError):
+            run_task.validate_runtime_options(run_mode="production", no_validate_artifacts=True)
+
 
 if __name__ == "__main__":
     unittest.main()

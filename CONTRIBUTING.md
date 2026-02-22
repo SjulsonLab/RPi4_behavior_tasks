@@ -42,4 +42,8 @@ python -m unittest discover -s tests -p 'test_*.py'
 `--run-mode production` and verify preflight/metadata fields.
 4. For shared-checkout policy changes, run one manual task with
 `--run-mode production --require-release-tag` when feasible.
-5. Update docs/runbook when workflow or guardrails change.
+5. Validate one produced run artifact directory:
+```bash
+python tools/verify_run_artifacts.py .task_runs/<run_id>
+```
+6. Update docs/runbook when workflow or guardrails change.

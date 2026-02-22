@@ -53,6 +53,13 @@ If production preflight fails:
 3. Move to an allowed release branch or tag.
 4. Re-run preflight in production mode.
 
+## Artifact integrity checks
+Runs are validated automatically after completion. To re-check an existing run:
+```bash
+python tools/verify_run_artifacts.py .task_runs/<run_id>
+```
+Note: production mode does not allow disabling artifact validation.
+
 ## Release cadence recommendation
 1. Validate on a staging Pi in debug mode.
 2. Tag the tested commit (`vX.Y.Z`).
